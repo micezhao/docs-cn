@@ -1,19 +1,34 @@
 # Async
-
+# 异步
 You may have noticed some APIs in Vapor expect or return a generic `EventLoopFuture` type. If this is your first time hearing about futures, they might seem a little confusing at first. But don't worry, this guide will show you how to take advantage of their powerful APIs. 
 
+你也许已经注意到在Vapor有些API期望或者需要返回一个泛型的`EventLoopFuture`类型。如果你是第一次听到futures，那么刚开始也许会让人感到困惑。但是不用担心，这篇引导将像你展示如何使用利用这个强大的API
+
 Promises and futures are related, but distinct, types. Promises are used to _create_ futures. Most of the time, you will be working with futures returned by Vapor's APIs and you will not need to worry about creating promises.
+
+Promises 和 futures 是有关联的两个对象。但是两者却有明显的区别。Promises是被用来创建futures对象。在对大多数时间，你将经常使用来futures来处理由Vapor框架所返回的API，同时无需担心如何创建Promises对象。
+
 
 |type|description|mutability|
 |-|-|-|
 |`EventLoopFuture`|Reference to a value that may not be available yet.|read-only|
 |`EventLoopPromise`|A promise to provide some value asynchronously.|read/write|
 
+|对象类型|功能描述|可变性|
+|-|-|-|
+|`EventLoopFuture`|引用一值，这个值也许已经无法使用.|只读|
+|`EventLoopPromise`|promise可以创建一些能够异步读写的值.|读/写|
+
+
 Futures are an alternative to callback-based asynchronous APIs. Futures can be chained and transformed in ways that simple closures cannot.
+Futures是基于回调的异步API的替代方案。Futures可以被链式操作和传递,而这种方式使用简单的闭包函数是做不到的。
 
 ## Transforming
+## 传递
 
 Just like optionals and arrays in Swift, futures can be mapped and flat-mapped. These are the most common operations you will perform on futures.
+
+就好像Swift的可选类型和数组一样，futures可以被进行map/flapmap映射处理。这些是你在使用futures对象时最常见的操作符号。
 
 |method|argument|description|
 |-|-|-|
@@ -22,8 +37,17 @@ Just like optionals and arrays in Swift, futures can be mapped and flat-mapped. 
 |[`flatMap`](#flatmap)|`(T) -> EventLoopFuture<U>`|Maps a future value to different _future_ value.|
 |[`transform`](#transform)|`U`|Maps a future to an already available value.|
 
+|方法|参数|描述|
+|-|-|-|
+|[`map`](#map)|`(T) -> U`|映射一个futrue的值变成另外一个值|
+|[`flatMapThrowing`](#flatmapthrowing)|`(T) throws -> U`|映射一个futrue的值变成另外一个值或抛出一个异常.|
+|[`flatMap`](#flatmap)|`(T) -> EventLoopFuture<U>`|映射一个futrue的值变成另外一个future对象|
+|[`transform`](#transform)|`U`|M射一个futrue的值到另一个可以访问的值中.|
+
+
 If you look at the method signatures for `map` and `flatMap` on `Optional<T>` and `Array<T>`, you will see that they are very similar to the methods available on `EventLoopFuture<T>`.
 
+如果你查看`Optional<T>`和`Array<T>`上`map`和`flatMap`的方法签名，你会发现它们与`EventLoopF​​uture<T>`上的可用方法非常相似。
 ### map
 
 The `map` method allows you to transform the future's value to another value. Because the future's value may not be available yet (it may be the result of an asynchronous task) we must provide a closure to accept the value.
